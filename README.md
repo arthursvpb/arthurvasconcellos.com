@@ -17,6 +17,10 @@
 
 Welcome to my professional webpage, a streamlined and easily navigable platform designed to connect you to my professional world with just a click. The website is structured similar to [Linktr.ee](https://linktr.ee/), providing quick access buttons that lead directly to my professional accounts.
 
+<div align="center">
+  <img src="./.github/preview.png" alt="Website Preview" />
+</div>
+
 ## ✨ Technologies
 
 This project was built using the following technologies:
