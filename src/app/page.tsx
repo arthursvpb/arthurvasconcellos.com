@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ICard } from '@/components/Card';
 import { CardList } from '@/components/CardList';
 
-export default function Home() {
+const Home = () => {
 	const cards: Array<ICard> = [
 		{
 			name: 'Github',
@@ -18,7 +18,7 @@ export default function Home() {
 		{
 			name: 'Contact',
 			iconPath: '/assets/svg/email.svg',
-			url: 'mailto:arthurvasconcellos.com',
+			url: 'mailto:contato@arthurvasconcellos.com',
 		},
 	];
 
@@ -52,4 +52,6 @@ export default function Home() {
 			</main>
 		</>
 	);
-}
+};
+
+export default Home;
