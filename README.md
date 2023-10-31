@@ -1,5 +1,5 @@
 <div align="center">
-  <img width=50 src="./public/favicon.ico" alt="Website Logo" />
+  <img width=45 src="./public/favicon.ico" alt="Website Logo" />
 	<h1>arthurvasconcellos.com</h1>
 </div>
 
