@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Home() {
 	return (
@@ -18,19 +19,49 @@ export default function Home() {
 
 				<ul className="flex flex-col gap-6 mt-5 mb-12">
 					<li className="rounded border-2 border-green-300 bg-green-900 h-16 w-60">
-						<button className="h-full w-full">
-							<span>LinkedIn</span>
-						</button>
+						<Link href="https://github.com/arthursvpb" target="_blank">
+							<button className="flex items-center justify-center h-full w-full">
+								<div className="flex items-center justify-center">
+									<Image
+										src="/assets/github.svg"
+										alt="Github"
+										width={25}
+										height={25}
+									/>
+									<p className="ml-2">Github</p>
+								</div>
+							</button>
+						</Link>
 					</li>
 					<li className="rounded border-2 border-green-300 bg-green-900 h-16 w-60">
-						<button className="h-full w-full">
-							<span>Github</span>
-						</button>
+						<Link href="https://github.com/arthursvpb" target="_blank">
+							<button className="flex items-center justify-center h-full w-full">
+								<div className="flex items-center justify-center">
+									<Image
+										src="/assets/github.svg"
+										alt="Github"
+										width={25}
+										height={25}
+									/>
+									<p className="ml-2">Github</p>
+								</div>
+							</button>
+						</Link>
 					</li>
 					<li className="rounded border-2 border-green-300 bg-green-900 h-16 w-60">
-						<button className="h-full w-full">
-							<span>Contact</span>
-						</button>
+						<Link href="https://github.com/arthursvpb" target="_blank">
+							<button className="flex items-center justify-center h-full w-full">
+								<div className="flex items-center justify-center">
+									<Image
+										src="/assets/github.svg"
+										alt="Github"
+										width={25}
+										height={25}
+									/>
+									<p className="ml-2">Github</p>
+								</div>
+							</button>
+						</Link>
 					</li>
 				</ul>
 
