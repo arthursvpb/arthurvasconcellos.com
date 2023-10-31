@@ -1,4 +1,7 @@
-<h1 align="center">arthurvasconcellos.com</h1>
+<div align="center">
+  <img width=50 src="./public/favicon.ico" alt="Website Logo" />
+	<h1>arthurvasconcellos.com</h1>
+</div>
 
 <p align="center">
   <a href="#-project">Project</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
