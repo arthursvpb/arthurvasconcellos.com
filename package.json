@@ -11,7 +11,7 @@
 	},
 	"engines": {
 		"node": ">=18.18.0",
-		"yarn": ">= 1.22.19",
+		"yarn": ">=1.22.19",
 		"npm": "This project uses Yarn, please install with `npm i -g yarn`"
 	},
 	"dependencies": {
