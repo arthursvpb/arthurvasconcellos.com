@@ -6,9 +6,9 @@ import '../styles/globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en-us">
-      <body className={inter.className}>{children}</body>
-    </html>
-  );
+	return (
+		<html lang="en-us">
+			<body className={inter.className}>{children}</body>
+		</html>
+	);
 }
