@@ -7,17 +7,17 @@ export default function Home() {
 	const cards: Array<ICard> = [
 		{
 			name: 'Github',
-			iconPath: '/assets/github.svg',
+			iconPath: '/assets/svg/github.svg',
 			url: 'https://github.com/arthursvpb',
 		},
 		{
 			name: 'Linkedin',
-			iconPath: '/assets/linkedin.svg',
+			iconPath: '/assets/svg/linkedin.svg',
 			url: 'https://linkedin.com/in/arthursvpb/',
 		},
 		{
 			name: 'Contact',
-			iconPath: '/assets/email.svg',
+			iconPath: '/assets/svg/email.svg',
 			url: 'mailto:arthurvasconcellos.com',
 		},
 	];
@@ -26,7 +26,7 @@ export default function Home() {
 		<>
 			<main className="max-h-screen flex flex-col items-center mx-auto">
 				<Image
-					src="/assets/profile.jpg"
+					src="/assets/images/profile.jpg"
 					alt="Arthur's Profile Picture"
 					className="rounded-full border-2 border-green-300 mt-12"
 					width={150}
