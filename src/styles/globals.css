@@ -10,7 +10,7 @@
 
 :root {
 	--foreground-rgb: 245, 245, 245;
-	--background-rgb: 19, 21, 22;
+	--background-rgb: 16, 27, 32;
 }
 
 html {
@@ -47,4 +47,8 @@ a {
 	cursor: pointer;
 	color: inherit;
 	text-decoration: none;
+}
+
+.bg-green-900 {
+	background: #0b1f27;
 }
