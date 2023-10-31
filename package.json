@@ -10,8 +10,8 @@
 		"lint": "next lint"
 	},
 	"engines": {
-		"node": ">=18.18.0",
-		"yarn": ">=1.22.19",
+		"node": ">=18",
+		"yarn": ">=1.22",
 		"npm": "This project uses Yarn, please install with `npm i -g yarn`"
 	},
 	"dependencies": {
