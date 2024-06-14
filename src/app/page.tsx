@@ -21,7 +21,7 @@ const cards: Array<ICard> = [
 	},
 ];
 
-const Home = ({ year }) => (
+const Home = () => (
 	<>
 		<main className="max-h-screen flex flex-col items-center mx-auto">
 			<Image
@@ -46,15 +46,12 @@ const Home = ({ year }) => (
 					height={50}
 					priority
 				/>
-				<p>Copyright © {year}</p>
+				<p>Copyright © {new Date().getFullYear()}</p>
 			</footer>
 		</main>
 	</>
 );
 
-export async function getStaticProps() {
-  const year = new Date().getFullYear();
-  return { props: { year }, revalidate: 86400 };
-}
+export const revalidate = 86400;
 
 export default Home;
