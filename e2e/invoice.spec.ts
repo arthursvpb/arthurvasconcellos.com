@@ -35,8 +35,12 @@ test.describe('A. Smoke', () => {
     expect(page.url()).toContain('/invoice');
   });
 
-  test('2. root redirects to /invoice', async ({ page }) => {
+  test('2. homepage lists personal apps and links to /invoice', async ({ page }) => {
     await page.goto('/');
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByText(/Arthur Vasconcellos/i).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: /personal apps/i })).toBeVisible();
+    await page.getByRole('link', { name: /invoice generator/i }).click();
     await expect(page).toHaveURL(/\/invoice$/);
   });
 
