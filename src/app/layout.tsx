@@ -1,21 +1,26 @@
 import type { Metadata, Viewport } from 'next';
-import { Nunito_Sans } from 'next/font/google';
+import { JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import './globals.css';
 
-const nunitoSans = Nunito_Sans({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-nunito-sans',
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  weight: ['400', '500'],
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'Invoice Generator',
+  metadataBase: new URL('https://arthurvasconcellos.com'),
+  title: {
+    default: 'Arthur Vasconcellos — AV LABS',
+    template: '%s · AV LABS',
+  },
   description:
-    'Local-first invoice and cancellation generator for contractors. Offline-capable, no backend, your data stays on your device.',
-  applicationName: 'Invoice Generator',
+    'Personal site by Arthur Vasconcellos - Software Engineer.',
+  applicationName: 'Arthur Vasconcellos',
   authors: [{ name: 'Arthur Vasconcellos' }],
   manifest: '/manifest.webmanifest',
   icons: {
@@ -30,14 +35,14 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Invoice',
+    title: 'AV',
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    { media: '(prefers-color-scheme: light)', color: '#f5f5f3' },
+    { media: '(prefers-color-scheme: dark)', color: '#1c1d20' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -45,7 +50,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={nunitoSans.variable}>
+    <html lang="en" suppressHydrationWarning className={jetbrainsMono.variable}>
+      <head>
+        {/* General Sans from Fontshare. Self-host (public/fonts) when stability demands. */}
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap"
+        />
+      </head>
       <body className="bg-background text-foreground min-h-screen">
         <ThemeProvider
           attribute="class"
