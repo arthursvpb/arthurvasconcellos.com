@@ -1,4 +1,11 @@
-import { InvoiceForm } from '@/components/invoice/invoice-form';
+import type { Metadata } from 'next';
+import { InvoiceForm } from '@/features/invoice';
+
+export const metadata: Metadata = {
+  title: 'Invoice Generator',
+  description:
+    'Local-first invoice and cancellation generator for contractors. Offline-capable, no backend, your data stays on your device.',
+};
 
 export default function InvoicePage() {
   return (

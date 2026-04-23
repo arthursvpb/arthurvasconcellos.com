@@ -1,4 +1,4 @@
-import { BugReportButton } from '@/components/bug-report/bug-report-button';
+import { BugReportButton } from '@/features/invoice/components/bug-report/bug-report-button';
 
 export function Footer() {
   return (

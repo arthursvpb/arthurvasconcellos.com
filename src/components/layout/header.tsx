@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { LanguageToggle } from '@/components/invoice/language-toggle';
+import { LanguageToggle } from '@/features/invoice/components/language-toggle';
 
 export function Header() {
   return (

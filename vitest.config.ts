@@ -8,7 +8,7 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/__tests__/**/*.test.ts'],
     exclude: ['node_modules/**', 'dist/**', '.next/**', 'e2e/**'],
-    setupFiles: ['./src/lib/pdf/__tests__/setup.ts'],
+    setupFiles: ['./src/features/invoice/lib/pdf/__tests__/setup.ts'],
   },
   resolve: {
     alias: {
