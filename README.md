@@ -1,66 +1,81 @@
 <div align="center">
-  <img width=45 src="./public/favicon.ico" alt="Website Logo" />
-	<h1>arthurvasconcellos.com</h1>
+  <img width="64" src="./public/icons/icon-192.png" alt="AV LABS monogram" />
+  <h1>arthurvasconcellos.com</h1>
+  <p>Personal site and apps by Arthur Vasconcellos - AV LABS.</p>
 </div>
 
 <p align="center">
-  <a href="#-project">Project</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-technologies">Technologies</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-running">Running</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-license">License</a>
+  <a href="#project">Project</a> &nbsp;·&nbsp;
+  <a href="#stack">Stack</a> &nbsp;·&nbsp;
+  <a href="#running">Running</a> &nbsp;·&nbsp;
+  <a href="#adding-a-new-app">Adding a new app</a> &nbsp;·&nbsp;
+  <a href="#license">License</a>
 </p>
 
 <p align="center">
-  <a href="#-license">
-    <img alt="License" src="https://img.shields.io/static/v1?label=license&message=MIT&color=32a852&labelColor=000000">
-  </a>
+  <img alt="Build status" src="https://github.com/arthursvpb/arthurvasconcellos.com/actions/workflows/ci.yml/badge.svg">
+  <img alt="License" src="https://img.shields.io/static/v1?label=license&message=MIT&color=0A0A0B&labelColor=6B6E76">
 </p>
 
-## 💻 Project
+## Project
 
-Welcome to my professional webpage, a streamlined and easily navigable platform designed to connect you to my professional world with just a click. The website is structured similar to [Linktr.ee](https://linktr.ee/), providing quick access buttons that lead directly to my professional accounts.
+Single Next.js host serving the personal homepage at `/` and personal apps at `/<slug>`. One repo, one deploy, one PWA, one design system - scoped by route, not by project. Future apps slot in as feature modules.
 
-<div align="center">
-  <img width=400 src="./.github/preview.png" alt="Website Preview" />
-</div>
+- `/` - AV LABS linktree, "Personal Apps" grid, social links.
+- `/invoice` - [Invoice Generator](./docs/adding-an-app.md): local-first invoice and cancellation PDFs for contractors. Offline-capable. Previously lived in its own repo (`arthursvpb/invoice-generator`, archived).
 
-## ✨ Technologies
+Design system documented in `ARCHITECTURE_DECISION.md`. Adding a new app: see [`docs/adding-an-app.md`](./docs/adding-an-app.md).
 
-This project was built using the following technologies:
+## Stack
 
-- [NextJS](https://nextjs.org/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [TypeScript](https://www.typescriptlang.org/)
+- **Framework** - Next.js 15 (App Router), React 19, TypeScript, strict mode
+- **Styling** - Tailwind v4, shadcn primitives, AV LABS design tokens, General Sans + JetBrains Mono (self-hosted)
+- **State** - zustand for invoice drafts and settings (per-feature)
+- **Forms & validation** - react-hook-form + zod, big.js for decimal math
+- **PDF** - `@react-pdf/renderer` with locally bundled fonts
+- **PWA** - Serwist service worker, scope `/`, AV monogram icon set
+- **Testing** - Vitest + Testing Library (76 unit tests), Playwright (68 scenarios, headless Chromium)
+- **Tooling** - pnpm, ESLint flat config, Prettier, GitHub Actions CI
 
-## 🟢 Running
+## Running
 
-Before you get started, ensure your development environment meets the following prerequisites:
-
-- Node.js: Version `18.18.0` or higher
-- Yarn: Version `1.22.19` or higher
-
-To run the project locally, follow these steps:
-
-1. **Clone the Repository**: Download the project files by running:
+Prerequisites: Node 22+, pnpm.
 
 ```sh
 git clone https://github.com/arthursvpb/arthurvasconcellos.com.git
+cd arthurvasconcellos.com
+pnpm install
+pnpm dev            # http://localhost:3000
 ```
 
-2. **Install Dependencies**: Navigate to the project directory and install the required packages:
+### Scripts
 
 ```sh
-yarn
+pnpm typecheck      # tsc --noEmit
+pnpm lint           # eslint .
+pnpm test           # vitest run
+pnpm build          # next build (generates public/sw.js for PWA)
+pnpm e2e            # playwright test (runs its own dev server on 3210)
+pnpm e2e:ui         # playwright in UI mode
+pnpm format         # prettier --write .
+
+node scripts/generate-icons.mjs            # regenerate PWA PNG set from AV monogram SVG
+bash scripts/refresh-general-sans.sh        # re-download General Sans WOFF2 from Fontshare
 ```
 
-3. **Run the Application**: Start the development server:
+## Adding a new app
 
-```sh
-yarn dev
-```
+Three steps, under 10 minutes to a "hello" skeleton: append to `src/lib/apps-registry.ts`, create `src/app/<slug>/page.tsx`, create `src/features/<slug>/`. Full recipe: [`docs/adding-an-app.md`](./docs/adding-an-app.md).
 
-This will launch the application, making it accessible via http://localhost:3000/.
+## Architecture
 
-## 📝 License
+- [`ARCHITECTURE_DECISION.md`](./docs/architecture-decision.md) - why single Next.js host, not monorepo/multi-zone/multi-repo
 
-This project is licensed under the MIT License. For more information, please refer to the [LICENSE](LICENSE.md) file.
+## History
+
+- `arthursvpb/arthurvasconcellos.com` (this repo) - production host since 2023; v2.0 (Apr 2026) unified with the invoice generator.
+- `arthursvpb/invoice-generator` - archived April 2026. Original home of `src/features/invoice/`; see its git log for the invoice-specific commit history.
+
+## License
+
+MIT. See [LICENSE.md](./LICENSE.md).
