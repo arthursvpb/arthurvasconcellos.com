@@ -35,7 +35,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Light (default) — AV LABS Paper surface. */
+/* Light (default) - AV LABS Paper surface. */
 :root {
   --radius: 0.5rem;
   --background: var(--av-paper);
@@ -59,7 +59,7 @@
   --ring: var(--av-axis);
 }
 
-/* Dark — AV LABS Graphite surface. */
+/* Dark - AV LABS Graphite surface. */
 .dark {
   --background: var(--av-graphite);
   --foreground: var(--av-white);

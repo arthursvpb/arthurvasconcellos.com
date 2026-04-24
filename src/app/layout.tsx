@@ -1,9 +1,22 @@
 import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import './globals.css';
+
+const generalSans = localFont({
+  src: [
+    { path: '../../public/fonts/general-sans/GeneralSans-300.woff2', weight: '300', style: 'normal' },
+    { path: '../../public/fonts/general-sans/GeneralSans-400.woff2', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/general-sans/GeneralSans-500.woff2', weight: '500', style: 'normal' },
+    { path: '../../public/fonts/general-sans/GeneralSans-600.woff2', weight: '600', style: 'normal' },
+    { path: '../../public/fonts/general-sans/GeneralSans-700.woff2', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-general-sans',
+  display: 'swap',
+});
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -12,30 +25,49 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 });
 
+const siteName = 'Arthur Vasconcellos';
+const siteDescription = 'Personal site by Arthur Vasconcellos - Software Engineer.';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://arthurvasconcellos.com'),
   title: {
-    default: 'Arthur Vasconcellos — AV LABS',
+    default: `${siteName} - AV LABS`,
     template: '%s · AV LABS',
   },
-  description:
-    'Personal site by Arthur Vasconcellos - Software Engineer.',
-  applicationName: 'Arthur Vasconcellos',
-  authors: [{ name: 'Arthur Vasconcellos' }],
-  manifest: '/manifest.webmanifest',
+  description: siteDescription,
+  applicationName: siteName,
+  authors: [{ name: siteName }],
+  creator: siteName,
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    siteName: `${siteName} - AV LABS`,
+    title: `${siteName} - AV LABS`,
+    description: siteDescription,
+    url: 'https://arthurvasconcellos.com',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${siteName} - AV LABS`,
+    description: siteDescription,
+  },
   icons: {
     icon: [
       { url: '/icons/icon.svg', type: 'image/svg+xml' },
       { url: '/icons/favicon-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'AV',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 };
 
@@ -50,14 +82,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={jetbrainsMono.variable}>
-      <head>
-        {/* General Sans from Fontshare. Self-host (public/fonts) when stability demands. */}
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap"
-        />
-      </head>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${generalSans.variable} ${jetbrainsMono.variable}`}
+    >
       <body className="bg-background text-foreground min-h-screen">
         <ThemeProvider
           attribute="class"

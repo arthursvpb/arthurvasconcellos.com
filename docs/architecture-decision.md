@@ -1,4 +1,4 @@
-# ADR-001 — AV LABS Personal Site + Apps Architecture
+# ADR-001 - AV LABS Personal Site + Apps Architecture
 
 Status: Proposed
 Date: 2026-04-22
@@ -8,8 +8,8 @@ Owner: Arthur Vasconcellos
 
 Two live repos, both on personal GitHub:
 
-- `arthursvpb/arthurvasconcellos.com` — Next.js 14 / React 18 / Tailwind 3 / Yarn / Node 18+. 5 source files. Effectively a linktree.
-- `arthursvpb/invoice-generator` — Next.js 15 / React 19 / Tailwind 4 / pnpm / Node 22+. ~60 source files, shadcn primitives, Serwist PWA, `@react-pdf/renderer`, zustand, react-hook-form, zod, vitest + playwright, custom i18n (pt-BR/en), `.av-code/` profile already deployed.
+- `arthursvpb/arthurvasconcellos.com` - Next.js 14 / React 18 / Tailwind 3 / Yarn / Node 18+. 5 source files. Effectively a linktree.
+- `arthursvpb/invoice-generator` - Next.js 15 / React 19 / Tailwind 4 / pnpm / Node 22+. ~60 source files, shadcn primitives, Serwist PWA, `@react-pdf/renderer`, zustand, react-hook-form, zod, vitest + playwright, custom i18n (pt-BR/en), `.av-code/` profile already deployed.
 
 Goal: `arthurvasconcellos.com/` is the homepage; `arthurvasconcellos.com/invoice` is the invoice generator; future personal apps mount under `arthurvasconcellos.com/{slug}`; all under the new AV LABS brand; easy to maintain for years by one person on Vercel.
 
@@ -62,7 +62,7 @@ Positive
 
 - New app in future = `src/app/<slug>/page.tsx` + `src/features/<slug>/` + one line in `src/lib/apps-registry.ts`. No infra.
 - One Tailwind config, one root layout, one PWA scope, one deployment, one Vercel project.
-- Next.js App Router splits bundles per route automatically — the homepage does not pay for the invoice bundle.
+- Next.js App Router splits bundles per route automatically - the homepage does not pay for the invoice bundle.
 - Brand tokens live in one file. Drift becomes a code-review concern, not an infra concern.
 
 Negative / Trade-offs

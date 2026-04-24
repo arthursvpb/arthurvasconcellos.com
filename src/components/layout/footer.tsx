@@ -1,5 +1,3 @@
-import { BugReportButton } from '@/features/invoice/components/bug-report/bug-report-button';
-
 export function Footer() {
   const year = new Date().getFullYear();
   return (
@@ -8,7 +6,14 @@ export function Footer() {
         <span className="font-mono text-[0.7rem] tracking-[0.08em] uppercase">
           © {year} Arthur Vasconcellos
         </span>
-        <BugReportButton />
+        <a
+          href="https://github.com/arthursvpb/arthurvasconcellos.com"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="hover:text-accent font-mono text-[0.7rem] tracking-[0.08em] uppercase transition-colors"
+        >
+          Source
+        </a>
       </div>
     </footer>
   );

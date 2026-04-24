@@ -12,7 +12,7 @@ export default function HomePage() {
         <SectionHeading
           num="01"
           title="Personal apps."
-          description="Small tools I use often. Each one solves a specific friction in my day — local-first, offline-friendly, no accounts."
+          description="Small tools I use often. Each one solves a specific friction in my day - local-first, offline-friendly, no accounts."
         />
         <AppsGrid />
       </section>

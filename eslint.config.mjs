@@ -1,4 +1,5 @@
 import { FlatCompat } from '@eslint/eslintrc';
+import nextPlugin from '@next/eslint-plugin-next';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,8 +8,23 @@ const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
+/**
+ * Flat config. The explicit `@next/next` plugin registration below makes
+ * Next.js's build-time detection happy (src/dist/lib/eslint/runLintCheck.js
+ * iterates flat configs looking for that exact plugin key).
+ */
 export default [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
+    plugins: { '@next/next': nextPlugin },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
+    },
+  },
+  ...compat.config({
+    extends: ['next/typescript'],
+  }),
   {
     ignores: [
       '.next/**',
@@ -17,8 +33,6 @@ export default [
       'dist/**',
       'coverage/**',
       'next-env.d.ts',
-      '*.config.mjs',
-      '*.config.ts',
       'public/sw.js',
       'public/workbox-*.js',
       'scripts/**',

@@ -9,8 +9,13 @@ const statusCopy: Record<AppStatus, string> = {
 };
 
 export function AppsGrid() {
+  // Single card looks lopsided in a 2-col grid. Only split to 2 cols once we
+  // have something to fill the second slot.
+  const gridCols = personalApps.length >= 2 ? 'sm:grid-cols-2' : 'grid-cols-1';
   return (
-    <ul className="border-border grid grid-cols-1 gap-px border bg-[color:var(--av-hair)] sm:grid-cols-2">
+    <ul
+      className={`border-border grid grid-cols-1 gap-px border bg-[color:var(--av-hair)] ${gridCols}`}
+    >
       {personalApps.map((app, index) => {
         const number = String(index + 1).padStart(2, '0');
         const isInteractive = app.status !== 'soon';

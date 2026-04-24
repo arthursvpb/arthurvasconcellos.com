@@ -20,3 +20,6 @@ public/workbox-*.js
 
 # misc
 *.pem
+
+# claude code local overrides
+.claude/settings.local.json
