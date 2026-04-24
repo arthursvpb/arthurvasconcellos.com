@@ -12,14 +12,15 @@ describe('personalApps registry', () => {
       expect(app.slug).toMatch(/^[a-z0-9-]+$/);
       expect(app.name.length).toBeGreaterThan(0);
       expect(app.description.length).toBeGreaterThan(0);
-      expect(app.href.startsWith('/')).toBe(true);
+      expect(app.href).toMatch(/^https:\/\/[a-z0-9-]+\.arthurvasconcellos\.com$/);
+      expect(app.repo).toMatch(/^https:\/\/github\.com\/arthursvpb\/[a-z0-9-]+$/);
       expect(['live', 'beta', 'soon']).toContain(app.status);
     }
   });
 
-  it('href matches slug so the route recipe stays consistent', () => {
+  it('href subdomain matches slug so the routing contract stays consistent', () => {
     for (const app of personalApps) {
-      expect(app.href).toBe(`/${app.slug}`);
+      expect(app.href).toBe(`https://${app.slug}.arthurvasconcellos.com`);
     }
   });
 

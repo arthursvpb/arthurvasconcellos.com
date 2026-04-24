@@ -1,85 +1,115 @@
-# ADR-001 - AV LABS Personal Site + Apps Architecture
+# ADR-002 - Subdomain Federation for AV LABS Apps
 
-Status: Proposed
-Date: 2026-04-22
+Status: Accepted
+Date: 2026-04-24
 Owner: Arthur Vasconcellos
+Supersedes: ADR-001 (single-repo host with feature modules)
 
 ## Context
 
-Two live repos, both on personal GitHub:
+Initial approach (ADR-001) consolidated every personal app into this single
+Next.js repo. Invoice moved from `arthursvpb/invoice-generator` into
+`src/features/invoice/`. That optimised for one-line deploys at the cost of
+per-app GitHub visibility (stars, READMEs, issue trackers, standalone deploy
+history).
 
-- `arthursvpb/arthurvasconcellos.com` - Next.js 14 / React 18 / Tailwind 3 / Yarn / Node 18+. 5 source files. Effectively a linktree.
-- `arthursvpb/invoice-generator` - Next.js 15 / React 19 / Tailwind 4 / pnpm / Node 22+. ~60 source files, shadcn primitives, Serwist PWA, `@react-pdf/renderer`, zustand, react-hook-form, zod, vitest + playwright, custom i18n (pt-BR/en), `.av-code/` profile already deployed.
-
-Goal: `arthurvasconcellos.com/` is the homepage; `arthurvasconcellos.com/invoice` is the invoice generator; future personal apps mount under `arthurvasconcellos.com/{slug}`; all under the new AV LABS brand; easy to maintain for years by one person on Vercel.
-
-Deep research proposed a "monorepo or unified repo" with route-based splitting. That direction is correct; the framing is under-specified and one trade-off it lists (bundle size, green-to-blue accent) is either already solved by Next App Router or cosmetic. Repo reality makes the choice sharper than the research suggests: the homepage is essentially disposable; the invoice app is the mature codebase. The architecture should be driven by that asymmetry, not by treating both repos as equal peers to "merge."
+New requirement: each app must remain a first-class GitHub project - its own
+repo, own Vercel deploy, own public-facing existence. But the apps still read
+as "under the AV LABS roof" to visitors, not as random scattered projects.
 
 ## Decision
 
-**Single Next.js 15 App Router host in the `arthurvasconcellos.com` repo.** Invoice becomes a feature module mounted at `/invoice`. Future apps become sibling feature modules under `/slug`. One deployment, one design system, one PWA.
+**Subdomain federation.**
 
-Concretely:
+- `arthurvasconcellos.com` - the host. Homepage only. Lists the apps via
+  `src/lib/apps-registry.ts` and links to each one.
+- `<slug>.arthurvasconcellos.com` - each app. Own GitHub repo, own Vercel
+  project, independent deploy, independent PWA, independent analytics.
+- Example: `invoice.arthurvasconcellos.com` is the invoice generator, sourced
+  from `arthursvpb/invoice-generator`.
 
-- Keep the **repo name** `arthurvasconcellos.com` (matches domain, preserves Vercel project + DNS).
-- **Upgrade that repo's stack in place** to match invoice-generator (Next 15, React 19, Tailwind 4, pnpm, Node 22).
-- **Copy invoice code** into the repo and organise it under `src/features/invoice/` with a thin route wrapper at `src/app/invoice/page.tsx`.
-- **Archive** `arthursvpb/invoice-generator` on GitHub. Its git history is preserved there, read-only.
-- **Re-skin** everything using the AV LABS tokens (`Ink / Graphite / Steel / Mist / Paper / Axis`), General Sans + JetBrains Mono, and the AV wordmark + monogram.
+DNS does the routing. No Vercel rewrites. No Next.js `basePath`. No multi-zone
+stitching. Each subdomain is its own origin.
+
+Brand consistency comes from a shared token + component set. V1 duplicates the
+brand files across repos with a sync doc. When a second app arrives, extract to
+an npm package (`@arthursvpb/av-labs`).
 
 ## Rejected Alternatives
 
-### A. Monorepo with Turborepo (`apps/web` + `apps/invoice` + `packages/ui` + `packages/config`)
+### A. Path federation (`arthurvasconcellos.com/invoice`)
+Architecturally equivalent in intent but requires `basePath` in every sub-app,
+asset proxying through Vercel rewrites, and a careful PWA-scope story across
+origins. For marginal URL-aesthetic gain. Rejected.
 
-Rejected.
+### B. Single-repo host with feature modules (ADR-001)
+Was the right call when the goal was minimal infra. Wrong now that per-app
+GitHub visibility is a stated requirement. Superseded.
 
-- Solves a problem you do not have: independent deploy cadence, independent runtime, independent ownership. Single maintainer + single Vercel project + shared brand = no pressure.
-- Adds: workspace config, package scoping, build orchestration cache, shared-package publishing nuances, separate `tsconfig`s, per-app Vercel projects or root-dir wiring.
-- Worth revisiting **only** when one app needs a separate runtime (Edge vs Node), a separate auth boundary, or a separate deploy cadence.
+### C. Monorepo with pnpm workspaces + two deploys
+Solves per-deploy isolation but keeps apps in one GitHub repo. Fails the
+visibility requirement. Rejected.
 
-### B. Next.js Multi-Zones
-
-Rejected.
-
-- Built to stitch two large, independent Next.js apps at the platform layer (classic case: marketing site + logged-in product). Fragments PWA scope, breaks seamless client-side navigation across zones, doubles CI.
-- For a linktree + one form app, this is industrial machinery on a kitchen table.
-
-### C. Multi-repo kept, Vercel rewrites for `/invoice`
-
-Rejected.
-
-- Works, but duplicates Tailwind config, duplicates fonts, duplicates UI primitives, duplicates root layout, duplicates metadata, and splits the PWA.
-- Every new app N-plies the drift: any brand change is 2 PRs, 3 PRs, 4 PRs.
-- Rewrites are a legitimate tool for external/legacy services, not for apps you own and want to brand consistently.
-
-### D. Iframe or external link-out
-
-Rejected. Breaks single-site feel and PWA continuity. The deep research correctly dismissed this; restating for completeness.
+### D. Git submodules
+Hostile to Vercel's Git integration, painful for contributors, no meaningful
+upside for a solo maintainer.
 
 ## Consequences
 
 Positive
 
-- New app in future = `src/app/<slug>/page.tsx` + `src/features/<slug>/` + one line in `src/lib/apps-registry.ts`. No infra.
-- One Tailwind config, one root layout, one PWA scope, one deployment, one Vercel project.
-- Next.js App Router splits bundles per route automatically - the homepage does not pay for the invoice bundle.
-- Brand tokens live in one file. Drift becomes a code-review concern, not an infra concern.
+- Each app has its own GitHub repo with its own stars, traffic, README,
+  issues, and deploy history.
+- No `basePath` gymnastics, no rewrite latency, no cross-origin PWA quirks.
+  Each app is a standalone origin that behaves like any normal website.
+- The host repo is tiny and static. Deploys in seconds. No surface area.
+- Adding a new app is a clean procedure: new GitHub repo, new Vercel project,
+  new DNS record, one entry in `apps-registry.ts`.
 
 Negative / Trade-offs
 
-- All apps share one Node runtime, one set of dependencies, one build. If one app eventually wants a radically different runtime or release cadence, it will have to move out. That is a future problem with a clear trigger, not a current one.
-- Invoice git history lives in the archived repo, not in the merged history. Mitigation: keep the archived repo read-only; reference it from this repo's README.
-- PWA scope widens from `/invoice` to `/`. Users who installed the standalone invoice PWA must reinstall from the new site. Acceptable; audience is very small.
+- Brand drifts across N repos unless explicitly synced. V1 uses duplication +
+  a sync doc; upgrade to a shared npm package at app #2.
+- N deploys instead of 1. Each app has its own release cadence. More repos to
+  update dependencies on. Real cost, acceptable at this scale.
+- Navigation from `arthurvasconcellos.com` to `invoice.arthurvasconcellos.com`
+  is a full page load (different origins). Not a bug - that's how subdomains
+  work - but different from a SPA.
+- Each app's PWA install is scoped to its own subdomain. Users install from
+  `invoice.arthurvasconcellos.com`, not from the host.
 
-## Why this matches repo reality
+## When to promote to a shared package
 
-- The homepage is 5 files with zero meaningful code. Preserving it adds nothing and blocks a cleaner rebuild.
-- The invoice-generator has all the infrastructure we want: Tailwind 4, shadcn, Serwist, testing, `.av-code/`. Rebuilding that infra in the homepage repo would be pointless. Copy it.
-- The invoice app already serves `/invoice` as its real route and redirects `/` to it. Removing the redirect and replacing the root with the homepage is a one-file change.
-- `components.json` + `shadcn/ui` + Tailwind v4 `@theme inline` directly accept the AV LABS palette as OKLCH tokens. No framework friction.
+Trigger: second app added. Two repos drifting is manageable; three will not
+be. Extract at app #2.
 
-## av-code alignment
+Plan when that time comes: create `arthursvpb/av-labs-brand`, publish to npm
+(public MIT), each app installs it, delete inline copies. Half-day of work.
 
-- Prefer pnpm (invoice already does). Drop Yarn from the homepage repo.
-- `.av-code/AGENTS.md` profile is already deployed in invoice-generator; re-deploy the `personal` profile to the merged repo.
-- Conventions: KISS, no em-dashes in source, no Co-Authored-By trailers, no unnecessary abstractions, smallest durable architecture. This decision follows all of them.
+## Host repo surface (this repo)
+
+```
+src/
+  app/
+    layout.tsx          Shell: fonts, theme, site header/footer
+    page.tsx            Homepage: hero, Personal Apps grid, Elsewhere
+    globals.css         Tailwind v4 @theme + AV LABS tokens
+    robots.ts           SEO
+    sitemap.ts          SEO (host-only; each app publishes its own)
+    error.tsx           Root error boundary
+    not-found.tsx       Branded 404
+  components/
+    brand/              Wordmark, Monogram (shared with each app)
+    home/               Hero, SectionHeading, AppsGrid, Elsewhere
+    layout/             Header, Footer (host-scoped)
+    theme-provider.tsx  next-themes wiring
+    theme-toggle.tsx
+  lib/
+    apps-registry.ts    Single source of truth for app cards
+    utils.ts            cn() helper
+  styles/
+    tokens.css          AV LABS palette (hex + oklch)
+```
+
+No invoice code here. No PDF generation. No shadcn primitives. No PWA. Just
+a linktree-grade homepage + apps registry.

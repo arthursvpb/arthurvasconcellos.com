@@ -1,118 +1,99 @@
 # Adding a Personal App
 
-Three steps. Under 10 minutes for a "hello" skeleton.
+Subdomain federation. Each app is its own GitHub repo, its own Vercel deploy,
+its own subdomain. No code in this host repo beyond a registry entry.
 
-## 1. Register the app
+Target for an app called `todo`: ~30-45 minutes, most of it Vercel + DNS.
 
-Edit `src/lib/apps-registry.ts`:
+## Prereqs
 
-```ts
-export const personalApps: PersonalApp[] = [
-  { slug: 'invoice', name: 'Invoice Generator', description: '...', href: '/invoice', status: 'live' },
-  // Append your new app:
-  {
-    slug: 'todo',
-    name: 'Todo',
-    description: 'Keyboard-driven todo list, local-first.',
-    href: '/todo',
-    status: 'beta',
-  },
-];
+- The app is built and deployed somewhere (locally or on a Vercel preview).
+- You have control of DNS for `arthurvasconcellos.com`.
+
+## 1. Create the GitHub repo
+
+`arthursvpb/<slug>` (e.g. `arthursvpb/todo`). Public. MIT license. Add a README
+with a top banner:
+
+```markdown
+> Live at https://<slug>.arthurvasconcellos.com - part of AV LABS.
 ```
 
-`status` controls the Personal Apps grid card:
-- `live` - card is an active link.
-- `beta` - card is an active link with "Beta" badge (identical behavior; signals maturity).
-- `soon` - card renders dimmed and unclickable.
+## 2. Ship the app with AV LABS brand
 
-## 2. Create the route
+Copy these from `arthurvasconcellos.com`:
 
-Thin wrappers at `src/app/<slug>/`:
+```
+src/styles/tokens.css
+src/components/brand/wordmark.tsx
+src/components/brand/monogram.tsx
+public/fonts/general-sans/*.woff2
+public/icons/icon.svg
+public/icons/favicon-32.png
+public/icons/apple-touch-icon.png
+scripts/refresh-general-sans.sh
+```
 
-```tsx
-// src/app/todo/page.tsx
-import type { Metadata } from 'next';
-import { TodoApp } from '@/features/todo';
+Wire the fonts + tokens into the app's `globals.css` and `layout.tsx`
+(see the host's files for the exact incantation).
 
-export const metadata: Metadata = {
-  title: 'Todo',
+In the app's `layout.tsx` metadata, set the canonical URL to
+`https://<slug>.arthurvasconcellos.com`.
+
+## 3. Create the Vercel project
+
+- New project on Vercel from the GitHub repo.
+- Node 22.x, pnpm auto-detected, Next.js preset.
+- Wait for the first deploy to `<something>.vercel.app`.
+
+## 4. Attach the subdomain
+
+**Vercel side:**
+
+- Project -> Settings -> Domains -> Add Domain
+- Type `<slug>.arthurvasconcellos.com`
+- Vercel shows the DNS record you need to add.
+
+**DNS side:**
+
+- At your registrar, add a CNAME:
+  - Name: `<slug>`
+  - Value: `cname.vercel-dns.com` (or whatever Vercel shows)
+  - TTL: default
+- Wait for DNS propagation (usually <5 min). Vercel auto-issues the SSL cert
+  once the CNAME resolves.
+
+## 5. Register on the homepage
+
+Append to `arthurvasconcellos.com`'s `src/lib/apps-registry.ts`:
+
+```ts
+{
+  slug: 'todo',
+  name: 'Todo',
   description: 'Keyboard-driven todo list, local-first.',
-};
-
-export default function TodoPage() {
-  return (
-    <section className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
-      <TodoApp />
-    </section>
-  );
-}
+  href: 'https://todo.arthurvasconcellos.com',
+  repo: 'https://github.com/arthursvpb/todo',
+  status: 'beta',
+},
 ```
 
-If the feature needs its own cross-cutting wiring (store hydration, persistence banner, lang toggle), add `src/app/<slug>/layout.tsx`:
-
-```tsx
-// src/app/todo/layout.tsx
-import { StoreHydrator } from '@/features/todo';
-
-export default function TodoLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <StoreHydrator />
-      {children}
-    </>
-  );
-}
-```
-
-## 3. Create the feature module
-
-`src/features/<slug>/` owns everything the feature needs:
-
-```
-src/features/todo/
-├── components/
-│   └── todo-app.tsx        // the main UI
-├── lib/
-│   └── ...                 // domain logic, types, persistence
-├── store/
-│   └── todo-store.ts       // zustand, if needed
-├── store-hydrator.tsx      // optional: rehydrate persisted stores
-└── index.ts                // public surface
-```
-
-`index.ts` is the only file consumed from outside the feature:
-
-```ts
-// src/features/todo/index.ts
-export { TodoApp } from './components/todo-app';
-export { StoreHydrator } from './store-hydrator';
-```
+Commit, push, merge. Homepage auto-updates.
 
 ## Rules
 
-- **Feature isolation.** Nothing outside `src/features/<slug>/` imports `src/features/<slug>/components/*` or `src/features/<slug>/lib/*`. Route files and other features only consume the public surface via `@/features/<slug>`.
-- **Shared primitives live in `src/components/ui/*`.** shadcn primitives (Button, Input, Dialog, ...) are shared. Extend them in place; do not fork inside a feature.
-- **Shared brand lives in `src/components/brand/*`.** Wordmark, Monogram, Symbol. Reuse these; do not redraw.
-- **Shared utilities live in `src/lib/*`.** `cn`, `apps-registry`, cross-feature helpers only. Anything invoice-specific goes under `src/features/invoice/lib/*`, not `src/lib/`.
-- **Tokens are the contract.** Compose from Tailwind tokens (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, `ring-accent`). Only use the raw `var(--av-*)` palette when a brand-fixed color is required (e.g. the Wordmark's LABS span).
-- **No new top-level state.** Each feature owns its zustand store under `src/features/<slug>/store/`. Global state is a smell; if two features truly share state, they are the same feature.
-
-## Verify
-
-```sh
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-pnpm e2e             # if you added E2E coverage
-```
-
-All green → merge → Vercel serves `/your-slug` alongside `/invoice` and everything else.
+- **Brand is shared.** Copy the brand files from the host repo; don't redraw.
+  When a second app exists, extract to an npm package.
+- **`status: 'soon'`** renders the card dimmed and unclickable. Use for apps
+  not yet deployed. `live` and `beta` are both clickable.
+- **Each app owns its PWA** (if it has one). Scope is the subdomain. Users
+  install from the subdomain, not from the host.
+- **Each app publishes its own `sitemap.xml` and `robots.txt`** at its own
+  origin. The host sitemap only lists `/`.
 
 ## What you do NOT need to do
 
-- No new Vercel project. Same deploy.
-- No new PWA manifest. Scope `/` already covers your route.
-- No new Tailwind config. Inherits from the site.
-- No new favicon set. Inherits the AV monogram.
-- No rewrites, no `basePath`, no multi-zone. Next App Router handles subpath routing natively.
+- No monorepo tooling. No pnpm workspaces.
+- No Next.js `basePath`. No Vercel rewrites. No multi-zone.
+- No reverse proxy. DNS does the routing.
+- No shared lockfile. Each repo has its own.

@@ -1,7 +1,7 @@
 <div align="center">
-  <img width="64" src="./public/icons/icon-192.png" alt="AV LABS monogram" />
+  <img width="64" src="./public/icons/icon.svg" alt="AV LABS monogram" />
   <h1>arthurvasconcellos.com</h1>
-  <p>Personal site and apps by Arthur Vasconcellos - AV LABS.</p>
+  <p>Personal site by Arthur Vasconcellos - AV LABS.</p>
 </div>
 
 <p align="center">
@@ -19,23 +19,27 @@
 
 ## Project
 
-Single Next.js host serving the personal homepage at `/` and personal apps at `/<slug>`. One repo, one deploy, one PWA, one design system - scoped by route, not by project. Future apps slot in as feature modules.
+This repo is the **host** for arthurvasconcellos.com: a small, restrained
+homepage that lists personal apps under the AV LABS brand.
 
-- `/` - AV LABS linktree, "Personal Apps" grid, social links.
-- `/invoice` - [Invoice Generator](./docs/adding-an-app.md): local-first invoice and cancellation PDFs for contractors. Offline-capable. Previously lived in its own repo (`arthursvpb/invoice-generator`, archived).
+Each personal app lives in **its own GitHub repo** and deploys to **its own
+subdomain** of `arthurvasconcellos.com`. See [ADR-002](./docs/architecture-decision.md)
+for why.
 
-Design system documented in `ARCHITECTURE_DECISION.md`. Adding a new app: see [`docs/adding-an-app.md`](./docs/adding-an-app.md).
+- `arthurvasconcellos.com` - this repo. Homepage + Personal Apps grid + Elsewhere.
+- `invoice.arthurvasconcellos.com` - [Invoice Generator](https://github.com/arthursvpb/invoice-generator).
+  Local-first invoice and cancellation PDFs for contractors.
 
 ## Stack
 
-- **Framework** - Next.js 15 (App Router), React 19, TypeScript, strict mode
-- **Styling** - Tailwind v4, shadcn primitives, AV LABS design tokens, General Sans + JetBrains Mono (self-hosted)
-- **State** - zustand for invoice drafts and settings (per-feature)
-- **Forms & validation** - react-hook-form + zod, big.js for decimal math
-- **PDF** - `@react-pdf/renderer` with locally bundled fonts
-- **PWA** - Serwist service worker, scope `/`, AV monogram icon set
-- **Testing** - Vitest + Testing Library (76 unit tests), Playwright (68 scenarios, headless Chromium)
+- **Framework** - Next.js 15 App Router, React 19, TypeScript (strict)
+- **Styling** - Tailwind v4, AV LABS design tokens, General Sans + JetBrains Mono (self-hosted)
+- **Themes** - next-themes (system / light / dark)
+- **Testing** - Vitest (apps-registry invariants)
 - **Tooling** - pnpm, ESLint flat config, Prettier, GitHub Actions CI
+
+No shadcn primitives here; no PWA on the host; no PDF generation here; no zustand.
+Every app that needs any of that carries it in its own repo.
 
 ## Running
 
@@ -53,28 +57,23 @@ pnpm dev            # http://localhost:3000
 ```sh
 pnpm typecheck      # tsc --noEmit
 pnpm lint           # eslint .
-pnpm test           # vitest run
-pnpm build          # next build (generates public/sw.js for PWA)
-pnpm e2e            # playwright test (runs its own dev server on 3210)
-pnpm e2e:ui         # playwright in UI mode
+pnpm test           # vitest run (4 tests, apps-registry invariants)
+pnpm build          # next build
 pnpm format         # prettier --write .
 
-node scripts/generate-icons.mjs            # regenerate PWA PNG set from AV monogram SVG
-bash scripts/refresh-general-sans.sh        # re-download General Sans WOFF2 from Fontshare
+bash scripts/refresh-general-sans.sh   # re-download General Sans WOFF2
 ```
 
 ## Adding a new app
 
-Three steps, under 10 minutes to a "hello" skeleton: append to `src/lib/apps-registry.ts`, create `src/app/<slug>/page.tsx`, create `src/features/<slug>/`. Full recipe: [`docs/adding-an-app.md`](./docs/adding-an-app.md).
+Three steps: create a new GitHub repo, attach a subdomain, append one entry
+to `src/lib/apps-registry.ts`. Full recipe: [`docs/adding-an-app.md`](./docs/adding-an-app.md).
 
 ## Architecture
 
-- [`ARCHITECTURE_DECISION.md`](./docs/architecture-decision.md) - why single Next.js host, not monorepo/multi-zone/multi-repo
-
-## History
-
-- `arthursvpb/arthurvasconcellos.com` (this repo) - production host since 2023; v2.0 (Apr 2026) unified with the invoice generator.
-- `arthursvpb/invoice-generator` - archived April 2026. Original home of `src/features/invoice/`; see its git log for the invoice-specific commit history.
+- [`ARCHITECTURE_DECISION.md`](./docs/architecture-decision.md) - ADR-002, subdomain
+  federation. Explains why this host stays tiny.
+  phase by phase (superseded by ADR-002 but kept for history).
 
 ## License
 
