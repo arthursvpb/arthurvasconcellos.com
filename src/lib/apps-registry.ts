@@ -18,4 +18,12 @@ export const personalApps: PersonalApp[] = [
     repo: 'https://github.com/arthursvpb/invoice-generator',
     status: 'live',
   },
+  {
+    slug: 'url',
+    name: 'URL Shortener',
+    description: 'Short links with access counts and one-click CSV export.',
+    href: 'https://url.arthurvasconcellos.com',
+    repo: 'https://github.com/arthursvpb/av-url-shortener',
+    status: 'live',
+  },
 ];
