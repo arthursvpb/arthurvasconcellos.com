@@ -29,6 +29,10 @@ for why.
 - `arthurvasconcellos.com` - this repo. Homepage + Personal Apps grid + Elsewhere.
 - `invoice.arthurvasconcellos.com` - [Invoice Generator](https://github.com/arthursvpb/invoice-generator).
   Local-first invoice and cancellation PDFs for contractors.
+- `url.arthurvasconcellos.com` - [URL Shortener](https://github.com/arthursvpb/av-url-shortener).
+  Short links with access counts and one-click CSV export.
+- `sign.arthurvasconcellos.com` - [PDF Signer](https://github.com/arthursvpb/sign).
+  Sign and verify PDFs with your own certificate, entirely in the browser.
 
 ## Stack
 

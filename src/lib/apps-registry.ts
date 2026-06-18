@@ -26,4 +26,12 @@ export const personalApps: PersonalApp[] = [
     repo: 'https://github.com/arthursvpb/av-url-shortener',
     status: 'live',
   },
+  {
+    slug: 'sign',
+    name: 'PDF Signer',
+    description: 'Sign and verify PDFs with your own certificate, entirely in the browser.',
+    href: 'https://sign.arthurvasconcellos.com',
+    repo: 'https://github.com/arthursvpb/sign',
+    status: 'live',
+  },
 ];
